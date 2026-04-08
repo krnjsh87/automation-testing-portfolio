@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  test-runner:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    volumes:
+      - ../test-results:/app/test-results
+      - ../reports:/app/reports
+    environment:
+      - CI=true
+    networks:
+      - test-network
+
+networks:
+  test-network:
+    driver: bridge

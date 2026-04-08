@@ -1,0 +1,54 @@
+pipeline {
+    agent any
+    
+    options {
+        buildDiscarder(logRotator(numToKeepStr: '10'))
+        timestamps()
+    }
+    
+    environment {
+        NODE_ENV = 'test'
+        REPORT_DIR = 'reports'
+    }
+    
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+        
+        stage('Setup') {
+            steps {
+                sh 'npm install'
+                sh 'npx playwright install --with-deps'
+            }
+        }
+        
+        stage('Execution') {
+            parallel {
+                stage('Smoke Tests') {
+                    steps {
+                        sh 'npx playwright test --grep @smoke'
+                    }
+                }
+                stage('Regression Tests') {
+                    steps {
+                        sh 'npx playwright test --grep-invert @smoke'
+                    }
+                }
+            }
+        }
+    }
+    
+    post {
+        always {
+            publishHTML([
+                reportDir: "${REPORT_DIR}",
+                reportFiles: 'index.html',
+                reportName: 'Test Report'
+            ])
+            archiveArtifacts artifacts: '**/test-results/**', allowEmptyArchive: true
+        }
+    }
+}
