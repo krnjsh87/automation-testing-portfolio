@@ -1,25 +1,33 @@
 {
   "name": "project-2-api-testing",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "REST API testing suite with Playwright, TypeScript, and Python demonstrating CRUD operations and contract testing",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "npx playwright test",
+    "test:headed": "npx playwright test --headed",
+    "test:ui": "npx playwright test --ui",
+    "test:users": "npx playwright test users-api",
+    "test:products": "npx playwright test products-api",
+    "test:orders": "npx playwright test orders-api",
+    "report": "npx playwright show-report",
+    "python:test": "python -m unittest discover scripts/python -v"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "api-testing",
+    "rest-api",
+    "playwright",
+    "automation-testing",
+    "typescript",
+    "python"
+  ],
+  "author": "Karan",
+  "license": "MIT",
   "type": "commonjs",
   "devDependencies": {
     "@playwright/test": "^1.59.1",
     "@types/node": "^25.5.2",
-    "axios": "^1.14.0",
-    "axios-mock-adapter": "^2.1.0",
     "dotenv": "^17.4.1",
     "ts-node": "^10.9.2",
     "typescript": "^6.0.2"
-  },
-  "dependencies": {
-    "node-fetch": "^3.3.2"
   }
 }

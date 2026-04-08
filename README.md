@@ -29,7 +29,7 @@ This portfolio is structured as a **monorepo**, housing five distinct, independe
 - **Tech Stack**: TypeScript, PostgreSQL, Winston, Jest.
 - **Key Highlight**: Implementation of **Singleton**, **Factory**, and **Strategy** patterns, integrated with a database for dynamic test data.
 
-### 05. [Full-Stack Platform integration](./project-5-full-stack-platform/)
+### 05. [Full-Stack Platform Integration](./project-5-full-stack-platform/)
 **Focus**: The Capstone Platform.
 - **Tech Stack**: LambdaTest, K6, Prometheus, Grafana, Kubernetes.
 - **Key Highlight**: A unified orchestrator coordinating E2E, API, and Performance testing with cloud grid integration and monitoring dashboards.

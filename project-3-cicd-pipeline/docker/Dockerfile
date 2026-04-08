@@ -1,11 +1,11 @@
 # Multi-stage Dockerfile for Test Automation
-FROM mcr.microsoft.com/playwright:v1.40.0-focal AS base
+FROM mcr.microsoft.com/playwright:v1.52.0-noble AS base
 
 WORKDIR /app
 
 # Install dependencies
 COPY package*.json ./
-RUN npm install
+RUN npm ci
 
 # Build stage
 FROM base AS builder

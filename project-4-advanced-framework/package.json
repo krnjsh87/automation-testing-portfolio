@@ -1,25 +1,32 @@
 {
   "name": "project-4-advanced-framework",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Enterprise-grade test automation framework with Singleton, Factory, and Strategy design patterns",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "npx playwright test",
+    "test:unit": "npx jest --config jest.config.js",
+    "test:e2e": "npx playwright test",
+    "report": "npx playwright show-report"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "design-patterns",
+    "test-framework",
+    "singleton",
+    "factory",
+    "strategy",
+    "playwright",
+    "typescript"
+  ],
+  "author": "Karan",
+  "license": "MIT",
   "type": "commonjs",
   "devDependencies": {
     "@playwright/test": "^1.59.1",
     "@types/jest": "^30.0.0",
     "@types/node": "^25.5.2",
     "@types/pg": "^8.20.0",
-    "ajv": "^8.18.0",
-    "axios": "^1.14.0",
     "jest": "^30.3.0",
     "pg": "^8.20.0",
-    "pino": "^10.3.1",
     "ts-jest": "^29.4.9",
     "ts-node": "^10.9.2",
     "typescript": "^6.0.2",

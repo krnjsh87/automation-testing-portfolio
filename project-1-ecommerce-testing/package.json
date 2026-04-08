@@ -1,14 +1,27 @@
 {
   "name": "project-1-ecommerce-testing",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "E-commerce test automation suite with Playwright and TypeScript using POM architecture",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "npx playwright test",
+    "test:headed": "npx playwright test --headed",
+    "test:ui": "npx playwright test --ui",
+    "test:debug": "npx playwright test --debug",
+    "test:chromium": "npx playwright test --project=chromium",
+    "test:firefox": "npx playwright test --project=firefox",
+    "test:webkit": "npx playwright test --project=webkit",
+    "report": "npx playwright show-report"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "automation",
+    "testing",
+    "playwright",
+    "typescript",
+    "e2e",
+    "page-object-model"
+  ],
+  "author": "Karan",
+  "license": "MIT",
   "type": "commonjs",
   "devDependencies": {
     "@playwright/test": "^1.59.1",
