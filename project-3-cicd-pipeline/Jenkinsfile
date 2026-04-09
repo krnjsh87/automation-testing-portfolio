@@ -4,17 +4,40 @@ pipeline {
     options {
         buildDiscarder(logRotator(numToKeepStr: '10'))
         timestamps()
+        timeout(time: 1, unit: 'HOURS')
     }
     
     environment {
         NODE_ENV = 'test'
         REPORT_DIR = 'reports'
+        TEST_RESULTS_DIR = 'test-results'
+        SLACK_CHANNEL = '#automation-tests'
+    }
+    
+    parameters {
+        choice(
+            name: 'TEST_SUITE',
+            choices: ['smoke', 'integration', 'regression', 'all'],
+            description: 'Select test suite to run'
+        )
+        booleanParam(
+            name: 'PARALLEL_EXECUTION',
+            defaultValue: true,
+            description: 'Run tests in parallel'
+        )
     }
     
     stages {
-        stage('Checkout') {
+        stage('Initialization') {
             steps {
-                checkout scm
+                script {
+                    echo "═══════════════════════════════════════"
+                    echo "BUILD INFORMATION"
+                    echo "═══════════════════════════════════════"
+                    echo "Build Number: ${BUILD_NUMBER}"
+                    echo "Test Suite: ${params.TEST_SUITE}"
+                    echo "═══════════════════════════════════════"
+                }
             }
         }
         
@@ -26,17 +49,17 @@ pipeline {
         }
         
         stage('Execution') {
-            parallel {
-                stage('Smoke Tests') {
-                    steps {
-                        sh 'npx playwright test --grep @smoke'
-                    }
+            steps {
+                script {
+                    def workers = params.PARALLEL_EXECUTION ? '4' : '1'
+                    sh "bash jenkins/scripts/test.sh ${params.TEST_SUITE} 'chromium,firefox,webkit' ${workers} ${REPORT_DIR} ${TEST_RESULTS_DIR}"
                 }
-                stage('Regression Tests') {
-                    steps {
-                        sh 'npx playwright test --grep-invert @smoke'
-                    }
-                }
+            }
+        }
+        
+        stage('Reporting') {
+            steps {
+                sh "bash jenkins/scripts/report.sh ${REPORT_DIR} ${TEST_RESULTS_DIR}"
             }
         }
     }
@@ -49,6 +72,9 @@ pipeline {
                 reportName: 'Test Report'
             ])
             archiveArtifacts artifacts: '**/test-results/**', allowEmptyArchive: true
+            script {
+                sh "bash jenkins/scripts/notify.sh ${currentBuild.currentResult == 'SUCCESS' ? 'success' : 'failure'} ${BUILD_URL} ${BUILD_NUMBER}"
+            }
         }
     }
 }

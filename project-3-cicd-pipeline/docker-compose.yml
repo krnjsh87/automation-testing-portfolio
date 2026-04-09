@@ -1,15 +1,81 @@
+version: '3.8'
+
 services:
-  test-runner:
-    build:
-      context: ..
-      dockerfile: docker/Dockerfile
+  # Jenkins CI/CD Server
+  jenkins:
+    image: jenkins/jenkins:lts
+    container_name: automation-jenkins
+    ports:
+      - "8080:8080"
+      - "50000:50000"
     volumes:
-      - ../test-results:/app/test-results
-      - ../reports:/app/reports
-    environment:
-      - CI=true
+      - jenkins_home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - test-network
+
+  # Sample Application (Target for testing)
+  portfolio-app:
+    build:
+      context: ./sample-app
+    container_name: test-app
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=test
+      - PORT=3000
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - test-network
+
+  # Database for Integration Tests
+  db:
+    image: postgres:15-alpine
+    container_name: test-db
+    environment:
+      POSTGRES_USER: testuser
+      POSTGRES_PASSWORD: testpass
+      POSTGRES_DB: testdb
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U testuser"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - test-network
+
+  # Playwright Test Runner
+  test-runner:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: automation-test-runner
+    environment:
+      - NODE_ENV=test
+      - CI=true
+      - BASE_URL=http://portfolio-app:3000
+    volumes:
+      - ./test-results:/app/test-results
+      - ./reports:/app/reports
+    depends_on:
+      portfolio-app:
+        condition: service_healthy
+      db:
+        condition: service_healthy
+    networks:
+      - test-network
+
+volumes:
+  jenkins_home:
+  postgres-data:
 
 networks:
   test-network:

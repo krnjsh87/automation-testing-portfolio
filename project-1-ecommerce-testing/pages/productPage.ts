@@ -11,7 +11,7 @@ export class ProductPage extends BasePage {
   private productNames = '.inventory_item_name';
   private productPrices = '.inventory_item_price';
   private addToCartButtons = 'button[data-test*="add-to-cart"]';
-  private sortDropdown = 'select[data-test="product_sort_container"]';
+  private sortDropdown = 'select[data-test="product-sort-container"]';
   private cartBadge = '.shopping_cart_badge';
   private cartLink = '.shopping_cart_link';
 

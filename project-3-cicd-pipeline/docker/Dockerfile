@@ -1,20 +1,36 @@
-# Multi-stage Dockerfile for Test Automation
+# Multi-stage build for test automation
 FROM mcr.microsoft.com/playwright:v1.52.0-noble AS base
 
 WORKDIR /app
 
-# Install dependencies
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    curl \
+    git \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy package files
 COPY package*.json ./
-RUN npm ci
 
-# Build stage
-FROM base AS builder
+# Install dependencies
+RUN npm install
+
+# Install Playwright browsers
+RUN npx playwright install --with-deps
+
+# Copy application code
 COPY . .
-RUN npm run build || echo "No build step required"
 
-# Runtime stage
+# Final stage
 FROM base AS runtime
-COPY --from=builder /app /app
 
+# Set environment
+ENV NODE_ENV=test
 ENV CI=true
-ENTRYPOINT ["npx", "playwright", "test"]
+
+# Create directories for results
+RUN mkdir -p test-results reports
+
+# Run tests by default
+ENTRYPOINT ["/app/jenkins/scripts/test.sh"]
+CMD ["all"]

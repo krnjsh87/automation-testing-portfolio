@@ -74,12 +74,12 @@ test.describe('Checkout Flow Tests', () => {
     expect(isErrorDisplayed).toBe(true);
   });
 
-  test('TC205: Cancel checkout returns to inventory', async ({ page }) => {
+  test('TC205: Cancel checkout returns to cart', async ({ page }) => {
     await productPage.clickCartLink();
     await cartPage.clickCheckout();
     await checkoutPage.clickCancel();
 
-    expect(page.url()).toContain('inventory');
+    expect(page.url()).toContain('cart');
   });
 
   test('TC206: Verify checkout summary is visible', async () => {
